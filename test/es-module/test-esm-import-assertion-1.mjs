@@ -1,4 +1,3 @@
-// Flags: --experimental-json-modules --harmony-import-assertions
 import '../common/index.mjs';
 import { strictEqual } from 'assert';
 

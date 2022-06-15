@@ -15,7 +15,9 @@ const parseSection = (text, startMarker, endMarker) => {
   const match = text.match(regExp);
   assert(match,
          `Unable to locate text between '${startMarker}' and '${endMarker}'.`);
-  return match[1].split(/\r?\n/);
+  return match[1]
+         .split(/\r?\n/)
+         .filter((val) => val.trim() !== '');
 };
 
 const nodeOptionsLines = parseSection(cliText,
@@ -24,6 +26,7 @@ const nodeOptionsLines = parseSection(cliText,
 const v8OptionsLines = parseSection(cliText,
                                     '<!-- node-options-v8 start -->',
                                     '<!-- node-options-v8 end -->');
+
 // Check the options are documented in alphabetical order.
 assert.deepStrictEqual(nodeOptionsLines, [...nodeOptionsLines].sort());
 assert.deepStrictEqual(v8OptionsLines, [...v8OptionsLines].sort());
@@ -42,6 +45,7 @@ for (const line of [...nodeOptionsLines, ...v8OptionsLines]) {
 
 if (!common.hasOpenSSL3) {
   documented.delete('--openssl-legacy-provider');
+  documented.delete('--openssl-shared-config');
 }
 
 // Filter out options that are conditionally present.
@@ -52,6 +56,7 @@ const conditionalOpts = [
       return [
         '--openssl-config',
         common.hasOpenSSL3 ? '--openssl-legacy-provider' : '',
+        common.hasOpenSSL3 ? '--openssl-shared-config' : '',
         '--tls-cipher-list',
         '--use-bundled-ca',
         '--use-openssl-ca',
